@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskMaster - Comprehensive To-Do App</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>TaskMaster <span class="subtitle">Your Personal Task Manager</span></h1>
+            <div class="header-actions">
+                <button id="feedback-btn" class="btn"><i class="fas fa-comment"></i> Feedback</button>
+                <button id="theme-toggle" class="btn"><i class="fas fa-moon"></i></button>
+            </div>
+        </header>
+
+        <main>
+            <div class="sidebar">
+                <div class="categories-section">
+                    <h2>Categories</h2>
+                    <ul id="categories-list">
+                        <li data-category="all" class="active">All Tasks</li>
+                        <li data-category="work">Work</li>
+                        <li data-category="personal">Personal</li>
+                        <li data-category="urgent">Urgent</li>
+                    </ul>
+                    <div class="add-category">
+                        <input type="text" id="new-category" placeholder="New category">
+                        <button id="add-category-btn"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+
+                <div class="filters-section">
+                    <h2>Filters</h2>
+                    <div class="filter-group">
+                        <label>Priority:</label>
+                        <select id="priority-filter">
+                            <option value="all">All</option>
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Status:</label>
+                        <select id="status-filter">
+                            <option value="all">All</option>
+                            <option value="pending">Pending</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Date:</label>
+                        <select id="date-filter">
+                            <option value="all">All</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="calendar-preview">
+                    <h2>Calendar</h2>
+                    <div id="mini-calendar"></div>
+                    <button id="open-calendar-view" class="btn">Full Calendar</button>
+                </div>
+            </div>
+
+            <div class="content">
+                <div class="task-input-container">
+                    <input type="text" id="task-input" placeholder="Add a new task...">
+                    <button id="add-task-btn" class="btn">Add Task</button>
+                </div>
+
+                <div class="view-toggle">
+                    <button id="list-view-btn" class="active"><i class="fas fa-list"></i> List</button>
+                    <button id="board-view-btn"><i class="fas fa-columns"></i> Board</button>
+                    <button id="calendar-view-btn"><i class="fas fa-calendar-alt"></i> Calendar</button>
+                </div>
+
+                <div id="tasks-container">
+                    <div id="list-view" class="view active">
+                        <div class="tasks-header">
+                            <span class="task-status">Status</span>
+                            <span class="task-name">Task</span>
+                            <span class="task-category">Category</span>
+                            <span class="task-priority">Priority</span>
+                            <span class="task-due-date">Due Date</span>
+                            <span class="task-actions">Actions</span>
+                        </div>
+                        <div id="tasks-list"></div>
+                    </div>
+
+                    <div id="board-view" class="view">
+                        <div class="board-columns">
+                            <div class="board-column" data-status="pending">
+                                <h3>To Do</h3>
+                                <div class="column-tasks" id="pending-tasks"></div>
+                            </div>
+                            <div class="board-column" data-status="in-progress">
+                                <h3>In Progress</h3>
+                                <div class="column-tasks" id="in-progress-tasks"></div>
+                            </div>
+                            <div class="board-column" data-status="completed">
+                                <h3>Completed</h3>
+                                <div class="column-tasks" id="completed-tasks"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="calendar-view" class="view">
+                        <div id="calendar-container"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Task Detail Modal -->
+    <div id="task-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modal-title">Task Details</h2>
+            <form id="task-form">
+                <div class="form-group">
+                    <label for="task-name">Task Name:</label>
+                    <input type="text" id="task-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="task-description">Description:</label>
+                    <textarea id="task-description" rows="3"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="task-category">Category:</label>
+                        <select id="task-category">
+                            <option value="work">Work</option>
+                            <option value="personal">Personal</option>
+                            <option value="urgent">Urgent</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="task-priority">Priority:</label>
+                        <select id="task-priority">
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="task-due-date">Due Date:</label>
+                        <input type="date" id="task-due-date">
+                    </div>
+                    <div class="form-group">
+                        <label for="task-due-time">Due Time:</label>
+                        <input type="time" id="task-due-time">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="task-status">Status:</label>
+                    <select id="task-status">
+                        <option value="pending">To Do</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="task-collaborators">Share with (comma-separated emails):</label>
+                    <input type="text" id="task-collaborators" placeholder="example@email.com, another@email.com">
+                </div>
+                <div class="form-group">
+                    <label for="task-notes">Notes:</label>
+                    <textarea id="task-notes" rows="3"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn primary">Save Task</button>
+                    <button type="button" id="delete-task" class="btn danger">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div id="feedback-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Send Feedback</h2>
+            <form id="feedback-form">
+                <div class="form-group">
+                    <label for="feedback-type">Feedback Type:</label>
+                    <select id="feedback-type">
+                        <option value="bug">Report a Bug</option>
+                        <option value="feature">Suggest a Feature</option>
+                        <option value="general">General Feedback</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="feedback-message">Your Feedback:</label>
+                    <textarea id="feedback-message" rows="5" required></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn primary">Submit Feedback</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Share Task Modal -->
+    <div id="share-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Share Task</h2>
+            <div class="form-group">
+                <label for="share-emails">Share with (comma-separated emails):</label>
+                <input type="text" id="share-emails" placeholder="example@email.com, another@email.com">
+            </div>
+            <div class="form-group">
+                <label for="share-message">Message (optional):</label>
+                <textarea id="share-message" rows="3"></textarea>
+            </div>
+            <div class="form-actions">
+                <button id="share-task-btn" class="btn primary">Share</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
